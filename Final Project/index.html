@@ -1,0 +1,78 @@
+<html>
+<head><meta http-equiv="Content-Type" content="text/html; charset=utf-8">
+	<title></title>
+</head>
+<body>
+<h1 style="text-align: center;">3D Reconstruction from 2D Images<br />
+<a href="https://courses.engr.illinois.edu/cs445/fa2017/">CS445: Computational Photography</a></h1>
+
+<p style="text-align: center;">YICHENG SUN, ANBANG YE, JIETING CHEN, JINBO CI</p>
+
+<p style="text-align: center;">University of Illinois at Urbana-Champaign</p>
+
+<p style="text-align: center;">{yicheng9, anbang7, jieting2, jinboci2}@illinois.edu</p>
+
+<p>We implement the method shown in <a href="https://people.eecs.berkeley.edu/~yang/courses/cs294-6/papers/TomasiC_Shape%20and%20motion%20from%20image%20streams%20under%20orthography.pdf">the&nbsp;paper from&nbsp;Tomasai and Kanade</a>.&nbsp;</p>
+
+<h2 style="text-align: center;">Shape and Motion from Image Streams under Orthography: a Factorization Method</h2>
+
+<p style="text-align: center;">CARLO TOMASI</p>
+
+<p style="text-align: center;">Department of Computer Science, Cornell University, Ithaca, NY 14850</p>
+
+<p style="text-align: center;">TAKEO KANADE</p>
+
+<p style="text-align: center;">School of Computer Science, Carnegie Mellon University, Pittsburgh, PA 15213</p>
+
+<h3>Abstract of The Paper</h3>
+
+<blockquote>
+<p>Inferring scene geometry and camera motion from a stream of images is possible in principle, but is an ill-conditioned problem when the objects are distant with respect to their size. We have developed a <strong>factorization </strong>method that can overcome this difficulty by recovering shape and motion under orthography without computing depth as an intermediate step.</p>
+
+<p>An image stream can be represented by the 2FxP measurement matrix of the image coordinates of P points tracked through F frames. We show that under orthographic projection this matrix is of rank 3.</p>
+
+<p>Based on this observation, the <strong>factorization </strong>method uses the <strong>singular-value decomposition technique</strong> to factor the measurement matrix into two matrices which represent object shape and camera rotation respectively. Two of the three translation components are computed in a preprocessing stage. The method can also handle and obtain a full solution from a partially filled-in measurement matrix that may result from occlusions or tracking failures.</p>
+
+<p>The method gives accurate results, and does not introduce smoothing in either shape or motion. We demonstrate this with a series of experiments on laboratory and outdoor image streams, with and without occlusions.</p>
+</blockquote>
+
+<p><strong>However, this paper only provides some&nbsp;theoretical&nbsp;ideas for 3D reconstruction. To implement the ideas in the paper requires considering much more details.</strong></p>
+
+<h3>The Coordinates of Feature Points</h3>
+
+<p>Part 2 of the paper<strong> Relation to Previous Work&nbsp;</strong>compares using the camera-centered system with the world-centered system. The authors mention that the camera-centered representation simplifies the equations for perspective projections, however, it makes shape estimation difficult, unstable, and noise-sensitive. In this project, we will follow Tomasi and Kanade and&nbsp;take advantage of the world-centered coordinates and under orthography. This formulation links object-centered shape to image motion directly, without using retinotopic depth as an intermediate quantity, and leads to a simple and well-behaved solution.</p>
+
+<h3>Before the Factorization Method</h3>
+
+<p>The paper supposes that we have already tracked P feature points over F frames in am image stream before implementing the factorization method. However, it takes some effort to detect these P corresponding points in each frame. Inspired by Project 5, we identify&nbsp;keypoints with RANSAC:</p>
+
+<ul>
+	<li>Select any four frames from all input images.</li>
+	<li><meta charset="utf-8" />Find the corresponding interesting points between the first frame with the other three frames</li>
+	<li>Find the common interesting points existing in all four frames</li>
+	<li>Use RANSAC Method to filtrate and get &ldquo;good&rdquo; interesting points</li>
+</ul>
+
+<p>The results are as follows:</p>
+
+<p>IMAGES?</p>
+
+<h3>The Factorization Method</h3>
+
+<p>The factorization method is the key point introduced by Tomasi and Kanade. It is illustrated in detail from page 138 to page 142 in <a href="https://people.eecs.berkeley.edu/~yang/courses/cs294-6/papers/TomasiC_Shape%20and%20motion%20from%20image%20streams%20under%20orthography.pdf">the paper</a>.</p>
+
+<p>Some important steps worth paying attention to when implementing the Factorization Method.</p>
+
+<ul>
+	<li>Compute Singular-Value Decomposition (SVD) <img alt="" src="/cs445/projfinal/pictures/Capture4.PNG" style="width: 22px; height: 20px;" />&nbsp;= O1 &Sigma; O2</li>
+	<li>Define&nbsp;<img alt="" src="/cs445/projfinal/pictures/Capture.PNG" style="width: 211px; height: 20px;" />&nbsp;where the primes refer to the block partitioning defined in (13)</li>
+	<li>Compute the matrix Q in equations (15) by imposing the metric constraints (equations (16)).</li>
+	<li>Compute the rotation matrix R and the shape matrix&nbsp;<img alt="" src="/cs445/projfinal/pictures/Capture1.PNG" style="width: 199px; height: 20px;" /></li>
+	<li>If desired, align the first camera reference system with the world reference system by forming the products&nbsp;<img alt="" src="/cs445/projfinal/pictures/Capture2.PNG" style="width: 87px; height: 20px;" />&nbsp;where the orthonormal matrix&nbsp;<img alt="" src="/cs445/projfinal/pictures/Capture3.PNG" style="width: 116px; height: 20px;" />rotates the first camera reference system into the identity matrix.</li>
+</ul>
+
+<p></p>
+
+<p>IMAGES?</p>
+</body>
+</html>
